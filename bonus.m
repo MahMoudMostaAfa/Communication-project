@@ -5,14 +5,14 @@ close all;
 % Generate random binary data
 m = randi([0 1], 1, 64); % 64-bit random binary data
 n = length(m);
-
+%Implementation of UNIPOLAR NRZ
 % Parameters
 max_amplitude = 1; % Maximum amplitude of the signal
 min_amplitude = 0; % Minimum amplitude of the signal
-T = 1000; % Total sampling time of the signal
+T = 1000; % Total time of the signal
 fs = 1000; % Sampling rate
 ts = 1/fs; % Sampling time
-x = linspace(0, n, n*fs); % Time vector
+t = linspace(0, n, n*fs); % Time vector
 
 % Generate pulse train
 y = [];
@@ -26,8 +26,8 @@ end
 
 % Plot temporal characteristics of the transmitted signal
 figure;
-plot(x, y);
-axis([0 n -2 2]);
+plot(t, y);
+axis([0 n -2 2]); %make y axis plot from -2 to 2
 grid on;
 box off;
 ylabel('Signal(V)');
@@ -36,14 +36,14 @@ title('Unipolar NRZ');
 
 % ASK Modulation
 fc =3; % Carrier frequency (Hz) higher than Rb , Rb=1
-carrier = cos(2*pi*fc*x); % Carrier signal
+carrier = cos(2*pi*fc*t); % Carrier signal
 
 % ASK Modulated Signal
 ask_signal = y .* carrier;
 
 % Plot ASK Modulated Signal
 figure;
-plot(x, ask_signal);
+plot(t, ask_signal);
 axis([0 n -3 3]);
 grid on;
 box off;
@@ -57,9 +57,9 @@ title('ASK Modulated Signal');
 threshold = 0.5; % Threshold for detection
 
 % Generate local carrier signals with different phase shifts
-carrier_30 = cos(2*pi*fc*x + deg2rad(30)); % 30 degree phase shift
-carrier_60 = cos(2*pi*fc*x + deg2rad(60)); % 60 degree phase shift
-carrier_90 = cos(2*pi*fc*x + deg2rad(90)); % 90 degree phase shift
+carrier_30 = cos(2*pi*fc*t + deg2rad(30)); % 30 degree phase shift
+carrier_60 = cos(2*pi*fc*t + deg2rad(60)); % 60 degree phase shift
+carrier_90 = cos(2*pi*fc*t + deg2rad(90)); % 90 degree phase shift
 
 % Coherent detection: multiply received signal with carriers having different phase shifts
 received_signal_30 = ask_signal .* carrier_30; % Received ASK modulated signal with 30 degree phase shift
@@ -85,38 +85,38 @@ figure;
 
 % Plot received ASK modulated signals
 subplot(4,2,1);
-plot(x, received_signal_30);
+plot(t, received_signal_30);
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Received ASK Modulated Signal with 30° Phase Shift');
 
 subplot(4,2,3);
-plot(x, received_signal_60);
+plot(t, received_signal_60);
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Received ASK Modulated Signal with 60° Phase Shift');
 
 subplot(4,2,5);
-plot(x, received_signal_90);
+plot(t, received_signal_90);
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Received ASK Modulated Signal with 90° Phase Shift');
 
 % Plot demodulated data after threshold detection
 subplot(4,2,2);
-plot(x, demodulated_data_30, 'r');
+plot(t, demodulated_data_30, 'r');
 xlabel('Time (s)');
 ylabel('Demodulated Data');
 title('Demodulated Data (After Threshold Detection) with 30° Phase Shift');
 
 subplot(4,2,4);
-plot(x, demodulated_data_60, 'r');
+plot(t, demodulated_data_60, 'r');
 xlabel('Time (s)');
 ylabel('Demodulated Data');
 title('Demodulated Data (After Threshold Detection) with 60° Phase Shift');
 
 subplot(4,2,6);
-plot(x, demodulated_data_90, 'r');
+plot(t, demodulated_data_90, 'r');
 xlabel('Time (s)');
 ylabel('Demodulated Data');
 title('Demodulated Data (After Threshold Detection) with 90° Phase Shift');
@@ -127,29 +127,26 @@ figure;
 
 % Plot filtered demodulated data for 30° phase shift
 subplot(3,1,1);
-plot(x, filtered_data_30, 'g');
+plot(t, filtered_data_30, 'g');
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Filtered Demodulated Data with 30° Phase Shift');
 
 % Plot filtered demodulated data for 60° phase shift
 subplot(3,1,2);
-plot(x, filtered_data_60, 'g');
+plot(t, filtered_data_60, 'g');
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Filtered Demodulated Data with 60° Phase Shift');
 
 % Plot filtered demodulated data for 90° phase shift
 subplot(3,1,3);
-plot(x, filtered_data_90, 'g');
+plot(t, filtered_data_90, 'g');
 xlabel('Time (s)');
 ylabel('Amplitude');
 title('Filtered Demodulated Data with 90° Phase Shift');
 
 % Adjust subplot spacing
-
-
-
 
 % Fourier transform of each spectrum
 figure;
@@ -164,32 +161,29 @@ f = linspace(-fs/2, fs/2, length(filtered_data_30));
 
 % Plot spectrum
 subplot(4,1,1);
-plot(f, fftshift(abs(spectrum_orig)));
+plot(f, fftshift(abs(spectrum_orig))*ts);
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 title('Fourier Transform of Original ASK Modulated Signal');
 
 % Plot spectrum for filtered demodulated data with 30° phase shift
 subplot(4,1,2);
-plot(f, fftshift(abs(spectrum_30)));
+plot(f, fftshift(abs(spectrum_30))*ts);
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 title('Fourier Transform of Filtered Demodulated Data with 30° Phase Shift');
 
 % Plot spectrum for filtered demodulated data with 60° phase shift
 subplot(4,1,3);
-plot(f, fftshift(abs(spectrum_60)));
+plot(f, fftshift(abs(spectrum_60))*ts);
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 title('Fourier Transform of Filtered Demodulated Data with 60° Phase Shift');
 
 % Plot spectrum for filtered demodulated data with 90° phase shift
 subplot(4,1,4);
-plot(f, fftshift(abs(spectrum_90)));
+plot(f, fftshift(abs(spectrum_90))*ts);
 xlabel('Frequency (Hz)');
 ylabel('Magnitude');
 title('Fourier Transform of Filtered Demodulated Data with 90° Phase Shift');
 
-Comment : 
-As phase shift of oscillator increases >>amplitude decreases of filtered demodulated signal 
-When phase shift=90 >>amplitude =0
